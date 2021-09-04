@@ -1,0 +1,146 @@
+---
+title: "ASSIGNMENT 4"
+author: "Theodore Koby-Hercsky"
+date: '2021-04-20'
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+```{r setup, include=FALSE}
+#load packages needed
+pkgs <- c("moments", "ggplot2", "dplyr", "tidyr", "tidyverse")
+install.packages(pkgs, repos = "http://cran.us.r-project.org")
+install.packages("lmtest", repos = "http://cran.us.r-project.org")
+install.packages("weatherData",repos = "http://cran.us.r-project.org")
+options(repos = c(CRAN = "http://cran.rstudio.com"))
+library(rmarkdown)
+library(readr)
+# installed pander and created a pandoc grid table
+install.packages("pander")
+library(pander)
+#chunk options
+knitr::opts_chunk$set(
+	error = TRUE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	out.width = "90%",
+	size = "small",
+	tidy = FALSE
+)
+```
+
+## Favorite Foods
+1. pasta
+2. pizza
+3. chicken
+
+## Images
+![`All Cases (Log Plot)`](plots/10-all-cases-log.png)
+
+## Add a Quote
+> "Effort and courage are not enough without purpose and direction." 
+>
+
+> --- JFK
+
+## Add an Equation
+
+$$\frac{4z^3}{16}$$
+## Add a Footnote
+
+^[This is my footnote.]
+
+## Add Citations
+
+* R for Everyone
+
+Ordered lists start each line with a number (any number or letter) and a period. Lists can be nested by indenting certain item in the list @lander2014r
+
+* Discovering Statistics Using R
+
+The ggplot2 function has some built-in functions called 'stats' that can be used a geom to get the necessary values to plot, or used directly to create visual elements on a layer of a plot @field2012r
+
+# Inline Code
+```{r Covid, include=FALSE}
+#load the ggplot2 from the library
+library(ggplot2)
+heights_df <- read_csv("data/r4ds/heights.csv")
+covid_df <- read_csv("data/nytimes/covid-19-data/us-states.csv")
+california_df<- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+```{r log scale, echo=FALSE}
+#generate the log scale plot from the NY time covid-19 data 
+ggplot(data=florida_df, aes(x=date, group=1)) + geom_line(aes(y = cases, colour = "Florida")) + geom_line(data=ny_df, aes(y = cases,colour="New York")) + geom_line(data=california_df, aes(y = cases, colour="California")) + scale_colour_manual("", breaks = c("10,000", "20,000", "30,000"), values = c("Florida"="darkred", "New York"="darkgreen", "California"="steelblue")) + xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+
+## R4DS Height vs Earnings
+```{r height, echo=FALSE}
+
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + geom_point(aes(alpha=age)) + ggtitle("Height vs. Earnings") + xlab("Height (Inches)") + ylab("Earnings (Dollars)")
+```
+
+
+# Tables
+```{r rings, include=FALSE}
+#creating the character data frame from data from a previous exercise
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+#created a data frame from the values above
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+#installing package webshot and phantomjs that is needed for knitr Table
+install.packages("webshot")
+webshot::install_phantomjs
+#Used knitr with kable to create a table of the Lord of the Rings characters from the character data frame
+```
+
+## Knitr Table with Kable
+```{r one, echo=FALSE}
+knitr::kable(head(characters_df), caption = "One Ring to Rule Them All")
+```
+
+
+## Pandoc Table
+```{r character, echo=FALSE}
+pandoc.table(characters_df, style = "rmarkdown")
+```
+
+# References
+---
+bibliography:C:Documents/Bellevue University Classes/Statistics for Data Science/dsc520/assignments/assignment04/bibliography.bib
+
+
+@book{lander2014r,
+  title={R for Everyone: Advanced Analytics and Graphics},
+  author={Lander, J.P.},
+  isbn={9780321888037},
+  lccn={2013027407},
+  series={Addison-Wesley data and analytics series},
+  url={https://books.google.com/books?id=3eBVAgAAQBAJ},
+  year={2014},
+  publisher={Addison-Wesley}}
+
+@book{field2012r,
+  title={Discovering Statistics Using R},
+  author={Field, A.; Miles, J.; Field, Z.},
+  isbn={9781446258460},
+  lccn={1446258467},
+  series={},
+  url={https://books.google.com/books?id=wd2K2zC3swIC.},
+  year={2012},
+  publisher={SAGE Publications}}
+---
+
+
